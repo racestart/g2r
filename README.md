@@ -9,6 +9,48 @@
 
 > *protocal*目录中的*build.sh*文件，可以将这些文件编译为一个静态库。
 
+## 使用说明
+`./g2r.out -I ./protocal -o ./message -t ./transorm xxx.proto`
+
+* -I 设置*include path* 设置`google buffer protocal`所在目录,处理`import`类似的语句
+* -o 设置`rosmsg`要输出的目录
+* -t 设置辅助转换**C++**源代码所在目录，生成类似代码
+
+```c++
+#include "g2r_Header.h"
+
+void g2r_hdmap_Header(apollo::hdmap::Header& arg_gprotoc, ros_hdmap::Header::Header& arg_rosmsg) {
+	arg_rosmsg.version = arg_gprotoc.version();
+	arg_rosmsg.date = arg_gprotoc.date();
+	arg_rosmsg.projection = arg_gprotoc.projection();
+	arg_rosmsg.district = arg_gprotoc.district();
+	arg_rosmsg.generation = arg_gprotoc.generation();
+	arg_rosmsg.rev_major = arg_gprotoc.rev_major();
+	arg_rosmsg.rev_minor = arg_gprotoc.rev_minor();
+	arg_rosmsg.left = arg_gprotoc.left();
+	arg_rosmsg.top = arg_gprotoc.top();
+	arg_rosmsg.right = arg_gprotoc.right();
+	arg_rosmsg.bottom = arg_gprotoc.bottom();
+	arg_rosmsg.vendor = arg_gprotoc.vendor();
+}
+
+void r2g_hdmap_Header(ros_hdmap::Header::Header& arg_rosmsg, apollo::hdmap::Header& arg_gprotoc) {
+	arg_gprotoc.set_version(arg_rosmsg.version);
+	arg_gprotoc.set_date(arg_rosmsg.date);
+	arg_gprotoc.set_projection(arg_rosmsg.projection);
+	arg_gprotoc.set_district(arg_rosmsg.district);
+	arg_gprotoc.set_generation(arg_rosmsg.generation);
+	arg_gprotoc.set_rev_major(arg_rosmsg.rev_major);
+	arg_gprotoc.set_rev_minor(arg_rosmsg.rev_minor);
+	arg_gprotoc.set_left(arg_rosmsg.left);
+	arg_gprotoc.set_top(arg_rosmsg.top);
+	arg_gprotoc.set_right(arg_rosmsg.right);
+	arg_gprotoc.set_bottom(arg_rosmsg.bottom);
+	arg_gprotoc.set_vendor(arg_rosmsg.vendor);
+}
+```
+
+
 ## map类型
 在遇到`map`类型时，会直接输出一个单独的*.msg*文件。例如：`map<int, string>`会生成一个名为*MapIntStringEntry.msg*的**ros message**。原来的`map`变量转换为`rosmsg`时变为`repeated MapIntStringEntry`一个队列变量。其对应文件内容为：
 
