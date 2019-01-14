@@ -89,6 +89,8 @@ int extract_package_name(struct package_t* pkg, char* package_name);
 char* get_tmp_message_name();
 char* get_tmp_enum_name();
 
+void fill_package_name(struct package_t* pkg);
+
 int insert_item_to_enum(struct enum_t* em, struct enum_item_t* em_item);
 int insert_expression_to_message(struct message_t* msg, struct expression_t* expression);
 int insert_enum_to_message(struct message_t* msg, struct enum_t* em);
@@ -123,7 +125,7 @@ void reset_yyparse();
 int is_curr_package_created = 0;
 
 
-#line 127 "g2r.tab.c" /* yacc.c:339  */
+#line 129 "g2r.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -191,7 +193,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 62 "./g2r.y" /* yacc.c:355  */
+#line 64 "./g2r.y" /* yacc.c:355  */
 
   char text[256];
   struct package_t* pkg;
@@ -201,7 +203,7 @@ union YYSTYPE
   struct expression_t* express;
   struct header_t* hdr;
 
-#line 205 "g2r.tab.c" /* yacc.c:355  */
+#line 207 "g2r.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -218,7 +220,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 222 "g2r.tab.c" /* yacc.c:358  */
+#line 224 "g2r.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -518,10 +520,10 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    89,    89,    95,    96,    99,   103,   111,   122,   126,
-     130,   134,   140,   145,   152,   167,   178,   187,   192,   210,
-     217,   226,   234,   240,   256,   272,   277,   282,   289,   296,
-     305,   312,   319,   326
+       0,    91,    91,    97,    98,   101,   105,   113,   125,   129,
+     133,   137,   143,   148,   155,   170,   181,   190,   195,   213,
+     220,   229,   237,   243,   259,   275,   280,   285,   292,   299,
+     308,   315,   322,   329
 };
 #endif
 
@@ -1341,37 +1343,37 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 89 "./g2r.y" /* yacc.c:1646  */
+#line 91 "./g2r.y" /* yacc.c:1646  */
     {
   (yyval.pkg) = (yyvsp[-1].pkg);
   return 0;
 }
-#line 1350 "g2r.tab.c" /* yacc.c:1646  */
+#line 1352 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 95 "./g2r.y" /* yacc.c:1646  */
+#line 97 "./g2r.y" /* yacc.c:1646  */
     {}
-#line 1356 "g2r.tab.c" /* yacc.c:1646  */
+#line 1358 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 96 "./g2r.y" /* yacc.c:1646  */
+#line 98 "./g2r.y" /* yacc.c:1646  */
     {}
-#line 1362 "g2r.tab.c" /* yacc.c:1646  */
+#line 1364 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 99 "./g2r.y" /* yacc.c:1646  */
+#line 101 "./g2r.y" /* yacc.c:1646  */
     {
   if (!is_curr_package_created) global_make_package("");
   strcpy(cpackage->header.syntax, (yyvsp[-1].text));
 }
-#line 1371 "g2r.tab.c" /* yacc.c:1646  */
+#line 1373 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 103 "./g2r.y" /* yacc.c:1646  */
+#line 105 "./g2r.y" /* yacc.c:1646  */
     {
   if (!is_curr_package_created) global_make_package("");
   if (cpackage->header.ifile_count >= MAX_IMPORT_FILES) {
@@ -1380,81 +1382,82 @@ yyreduce:
   }
   strcpy(cpackage->header.import_files[cpackage->header.ifile_count++], (yyvsp[-1].text));
 }
-#line 1384 "g2r.tab.c" /* yacc.c:1646  */
+#line 1386 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 111 "./g2r.y" /* yacc.c:1646  */
+#line 113 "./g2r.y" /* yacc.c:1646  */
     {
   if (!is_curr_package_created) global_make_package("");
   int ret = extract_package_name(cpackage, (yyvsp[0].text));
   if (ret != 0) {
     return ret;
   }
-  char* name = cpackage->header.package_name[cpackage->header.package_name_count-1];
-  strcpy(cpackage->name, name);
+
+  //char* name = cpackage->header.package_name[cpackage->header.package_name_count-1];
+  fill_package_name(cpackage);
 }
-#line 1398 "g2r.tab.c" /* yacc.c:1646  */
+#line 1401 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 122 "./g2r.y" /* yacc.c:1646  */
+#line 125 "./g2r.y" /* yacc.c:1646  */
     {
   if (insert_message_to_package(cpackage, (yyvsp[0].msg)) != 0) return -1;
   (yyval.pkg) = cpackage;
 }
-#line 1407 "g2r.tab.c" /* yacc.c:1646  */
+#line 1410 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 126 "./g2r.y" /* yacc.c:1646  */
+#line 129 "./g2r.y" /* yacc.c:1646  */
     {
   if (insert_enum_to_package(cpackage, (yyvsp[0].em)) != 0) return -1;
   (yyval.pkg) = cpackage;
 }
-#line 1416 "g2r.tab.c" /* yacc.c:1646  */
+#line 1419 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 130 "./g2r.y" /* yacc.c:1646  */
+#line 133 "./g2r.y" /* yacc.c:1646  */
     { 
   if (insert_message_to_package((yyvsp[-1].pkg), (yyvsp[0].msg)) != 0) return -1;
   (yyval.pkg) = (yyvsp[-1].pkg);
 }
-#line 1425 "g2r.tab.c" /* yacc.c:1646  */
+#line 1428 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 134 "./g2r.y" /* yacc.c:1646  */
+#line 137 "./g2r.y" /* yacc.c:1646  */
     {
   if (insert_enum_to_package((yyvsp[-1].pkg), (yyvsp[0].em)) != 0) return -1;
   (yyval.pkg) = (yyvsp[-1].pkg);
 }
-#line 1434 "g2r.tab.c" /* yacc.c:1646  */
+#line 1437 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 140 "./g2r.y" /* yacc.c:1646  */
+#line 143 "./g2r.y" /* yacc.c:1646  */
     {
   dbgprintf("rename message `%s` to `%s`\r\n", (yyvsp[-1].msg)->name, (yyvsp[-3].text));
   strcpy((yyvsp[-1].msg)->name, (yyvsp[-3].text));
   (yyval.msg) = (yyvsp[-1].msg);
 }
-#line 1444 "g2r.tab.c" /* yacc.c:1646  */
+#line 1447 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 145 "./g2r.y" /* yacc.c:1646  */
+#line 148 "./g2r.y" /* yacc.c:1646  */
     {
   struct message_t* msg = create_message((yyvsp[-2].text));
   if (!msg) return -1;
   (yyval.msg) = msg;
 }
-#line 1454 "g2r.tab.c" /* yacc.c:1646  */
+#line 1457 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 152 "./g2r.y" /* yacc.c:1646  */
+#line 155 "./g2r.y" /* yacc.c:1646  */
     {
   struct message_t* msg = create_message(get_tmp_message_name());
   if (!msg) return -1;
@@ -1470,11 +1473,11 @@ yyreduce:
   }
   (yyval.msg) = msg;
 }
-#line 1474 "g2r.tab.c" /* yacc.c:1646  */
+#line 1477 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 167 "./g2r.y" /* yacc.c:1646  */
+#line 170 "./g2r.y" /* yacc.c:1646  */
     {
   if (insert_expression_to_message((yyvsp[-1].msg), (yyvsp[0].express)) != 0)
     return -1;
@@ -1486,11 +1489,11 @@ yyreduce:
   }
   (yyval.msg) = (yyvsp[-1].msg);
 }
-#line 1490 "g2r.tab.c" /* yacc.c:1646  */
+#line 1493 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 178 "./g2r.y" /* yacc.c:1646  */
+#line 181 "./g2r.y" /* yacc.c:1646  */
     {
   if (insert_message_to_package(cpackage, (yyvsp[0].msg)) != 0)
     return -1;
@@ -1500,21 +1503,21 @@ yyreduce:
   if (!msg) return -1;
   (yyval.msg) = msg;
 }
-#line 1504 "g2r.tab.c" /* yacc.c:1646  */
+#line 1507 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 187 "./g2r.y" /* yacc.c:1646  */
+#line 190 "./g2r.y" /* yacc.c:1646  */
     {
   if (insert_message_to_package(cpackage, (yyvsp[0].msg)) != 0)
     return -1;
   (yyval.msg) = (yyvsp[-1].msg);
 }
-#line 1514 "g2r.tab.c" /* yacc.c:1646  */
+#line 1517 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 192 "./g2r.y" /* yacc.c:1646  */
+#line 195 "./g2r.y" /* yacc.c:1646  */
     {
   /*
    * 这里修改枚举体到插入到包体内，google buffer protocal
@@ -1533,11 +1536,11 @@ yyreduce:
   if (!msg) return -1;
   (yyval.msg) = msg;
 }
-#line 1537 "g2r.tab.c" /* yacc.c:1646  */
+#line 1540 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 210 "./g2r.y" /* yacc.c:1646  */
+#line 213 "./g2r.y" /* yacc.c:1646  */
     {
   // 这里的处理同上
   //if (insert_enum_to_message($1, $2) != 0)
@@ -1545,11 +1548,11 @@ yyreduce:
     return -1;
   (yyval.msg) = (yyvsp[-1].msg);
 }
-#line 1549 "g2r.tab.c" /* yacc.c:1646  */
+#line 1552 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 217 "./g2r.y" /* yacc.c:1646  */
+#line 220 "./g2r.y" /* yacc.c:1646  */
     {
   //struct message_t* msg = create_message("");
   //if (!msg) return -1;
@@ -1559,31 +1562,31 @@ yyreduce:
   dbgprintf("define oneof '%s' in message first element\r\n", (yyvsp[0].msg)->name);
   (yyval.msg) = (yyvsp[0].msg);
 }
-#line 1563 "g2r.tab.c" /* yacc.c:1646  */
+#line 1566 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 226 "./g2r.y" /* yacc.c:1646  */
+#line 229 "./g2r.y" /* yacc.c:1646  */
     {
   if (get_expression_message_to_message((yyvsp[-1].msg), (yyvsp[0].msg)) != 0)
     return -1;
   free((yyvsp[0].msg)); // 这里不需要临时的message结构了
   (yyval.msg) = (yyvsp[-1].msg);
 }
-#line 1574 "g2r.tab.c" /* yacc.c:1646  */
+#line 1577 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 234 "./g2r.y" /* yacc.c:1646  */
+#line 237 "./g2r.y" /* yacc.c:1646  */
     {
   //strcpy($4->name, $2);
   (yyval.msg) = (yyvsp[-1].msg);
 }
-#line 1583 "g2r.tab.c" /* yacc.c:1646  */
+#line 1586 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 240 "./g2r.y" /* yacc.c:1646  */
+#line 243 "./g2r.y" /* yacc.c:1646  */
     {
   if (!is_type((yyvsp[-2].text))) {
     yyerror("invalid type\r\n");
@@ -1600,11 +1603,11 @@ yyreduce:
 
   (yyval.msg) = msg;
 }
-#line 1604 "g2r.tab.c" /* yacc.c:1646  */
+#line 1607 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 256 "./g2r.y" /* yacc.c:1646  */
+#line 259 "./g2r.y" /* yacc.c:1646  */
     {
   if (!is_type((yyvsp[-3].text))) {
     yyerror("invalid type\r\n");
@@ -1619,41 +1622,41 @@ yyreduce:
 
   (yyval.msg) = (yyvsp[-4].msg);
 }
-#line 1623 "g2r.tab.c" /* yacc.c:1646  */
+#line 1626 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 272 "./g2r.y" /* yacc.c:1646  */
+#line 275 "./g2r.y" /* yacc.c:1646  */
     {
   struct expression_t* express = create_expression(0, (yyvsp[-3].text), (yyvsp[-2].text), (yyvsp[0].text));
   if (!express) return -1;
   (yyval.express) = express;
 }
-#line 1633 "g2r.tab.c" /* yacc.c:1646  */
+#line 1636 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 277 "./g2r.y" /* yacc.c:1646  */
+#line 280 "./g2r.y" /* yacc.c:1646  */
     {
   struct expression_t* express = create_expression(1, (yyvsp[-3].text), (yyvsp[-2].text), (yyvsp[0].text));
   if (!express) return -1;
   (yyval.express) = express;
 }
-#line 1643 "g2r.tab.c" /* yacc.c:1646  */
+#line 1646 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 282 "./g2r.y" /* yacc.c:1646  */
+#line 285 "./g2r.y" /* yacc.c:1646  */
     {
   struct expression_t* express = create_map_expression((yyvsp[-6].text), (yyvsp[-4].text), (yyvsp[-2].text), (yyvsp[0].text));
   if (!express) return -1;
   (yyval.express) = express;
 }
-#line 1653 "g2r.tab.c" /* yacc.c:1646  */
+#line 1656 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 289 "./g2r.y" /* yacc.c:1646  */
+#line 292 "./g2r.y" /* yacc.c:1646  */
     {
   if (!is_type((yyvsp[0].text))) {
     yyerror("invalid type\r\n");
@@ -1661,11 +1664,11 @@ yyreduce:
   }
   strcpy((yyval.text), (yyvsp[0].text));
 }
-#line 1665 "g2r.tab.c" /* yacc.c:1646  */
+#line 1668 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 296 "./g2r.y" /* yacc.c:1646  */
+#line 299 "./g2r.y" /* yacc.c:1646  */
     { 
   if (!is_type((yyvsp[0].text))) {
     yyerror("invalid type\r\n");
@@ -1673,21 +1676,21 @@ yyreduce:
   }
   strcpy((yyval.text), (yyvsp[0].text));
 }
-#line 1677 "g2r.tab.c" /* yacc.c:1646  */
+#line 1680 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 305 "./g2r.y" /* yacc.c:1646  */
+#line 308 "./g2r.y" /* yacc.c:1646  */
     {
   dbgprintf("rename enum `%s` to `%s`\r\n", (yyvsp[-1].em)->name, (yyvsp[-3].text));
   strcpy((yyvsp[-1].em)->name, (yyvsp[-3].text));
   (yyval.em) = (yyvsp[-1].em);
 }
-#line 1687 "g2r.tab.c" /* yacc.c:1646  */
+#line 1690 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 312 "./g2r.y" /* yacc.c:1646  */
+#line 315 "./g2r.y" /* yacc.c:1646  */
     {
   struct enum_t* em = create_enum(get_tmp_enum_name());
   if (!em) return -1;
@@ -1695,31 +1698,31 @@ yyreduce:
     return -1;
   (yyval.em) = em;
 }
-#line 1699 "g2r.tab.c" /* yacc.c:1646  */
+#line 1702 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 319 "./g2r.y" /* yacc.c:1646  */
+#line 322 "./g2r.y" /* yacc.c:1646  */
     {
   if (insert_item_to_enum((yyvsp[-1].em), (yyvsp[0].em_item)) != 0)
     return -1;
   (yyval.em) = (yyvsp[-1].em);
 }
-#line 1709 "g2r.tab.c" /* yacc.c:1646  */
+#line 1712 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 326 "./g2r.y" /* yacc.c:1646  */
+#line 329 "./g2r.y" /* yacc.c:1646  */
     {
   struct enum_item_t* em_item = create_enum_item((yyvsp[-2].text), (yyvsp[0].text));
   if (!em_item) return -1;
   (yyval.em_item) = em_item;
 }
-#line 1719 "g2r.tab.c" /* yacc.c:1646  */
+#line 1722 "g2r.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1723 "g2r.tab.c" /* yacc.c:1646  */
+#line 1726 "g2r.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1947,7 +1950,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 333 "./g2r.y" /* yacc.c:1906  */
+#line 336 "./g2r.y" /* yacc.c:1906  */
 
 void yyerror(char* s, ...) {
   va_list ap;
@@ -2001,6 +2004,26 @@ char* get_tmp_enum_name() {
 
   sprintf(tmp, "enum_tmp_%d", count++);
   return tmp;  
+}
+
+// 在使用此函数之前,调用 extract_package_name 函数
+void fill_package_name(struct package_t* pkg) {
+  assert(pkg);
+  /*
+   * 如果第一个是apollo那么则跳过,使用随后的合成包名
+   */
+  char package_name[MAX_NAME_SIZE] = {0};
+
+  for (int i = 0; i < cpackage->header.package_name_count; i++) {
+    strcat(package_name, pkg->header.package_name[i]);
+    if (i < pkg->header.package_name_count-1) {
+      strcat(package_name, "_");
+    }
+  }
+
+  //sprintf(package_name, "ros_%s", package_name);
+  strcpy(pkg->name, package_name);
+  return;
 }
 
 static char str_internal_type[] = 

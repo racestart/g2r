@@ -24,6 +24,8 @@ int extract_package_name(struct package_t* pkg, char* package_name);
 char* get_tmp_message_name();
 char* get_tmp_enum_name();
 
+void fill_package_name(struct package_t* pkg);
+
 int insert_item_to_enum(struct enum_t* em, struct enum_item_t* em_item);
 int insert_expression_to_message(struct message_t* msg, struct expression_t* expression);
 int insert_enum_to_message(struct message_t* msg, struct enum_t* em);
@@ -114,8 +116,9 @@ statement: SYNTAX ASSIGN QUOTATION PROTO QUOTATION {
   if (ret != 0) {
     return ret;
   }
-  char* name = cpackage->header.package_name[cpackage->header.package_name_count-1];
-  strcpy(cpackage->name, name);
+
+  //char* name = cpackage->header.package_name[cpackage->header.package_name_count-1];
+  fill_package_name(cpackage);
 }
 ;
 
@@ -383,6 +386,26 @@ char* get_tmp_enum_name() {
 
   sprintf(tmp, "enum_tmp_%d", count++);
   return tmp;  
+}
+
+// 在使用此函数之前,调用 extract_package_name 函数
+void fill_package_name(struct package_t* pkg) {
+  assert(pkg);
+  /*
+   * 如果第一个是apollo那么则跳过,使用随后的合成包名
+   */
+  char package_name[MAX_NAME_SIZE] = {0};
+
+  for (int i = 0; i < cpackage->header.package_name_count; i++) {
+    strcat(package_name, pkg->header.package_name[i]);
+    if (i < pkg->header.package_name_count-1) {
+      strcat(package_name, "_");
+    }
+  }
+
+  //sprintf(package_name, "ros_%s", package_name);
+  strcpy(pkg->name, package_name);
+  return;
 }
 
 static char str_internal_type[] = 

@@ -78,7 +78,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 62 "./g2r.y" /* yacc.c:1909  */
+#line 64 "./g2r.y" /* yacc.c:1909  */
 
   char text[256];
   struct package_t* pkg;

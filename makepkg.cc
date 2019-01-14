@@ -64,8 +64,8 @@ int create_package_xml(char* xmlPath, struct package_t* pkg) {
     gerror("create \'%s\' failed\r\n", xmlPath);
     return -1;
   };
-  fprintf(fp, "<package>\r\n");
-  fprintf(fp, "\t<name>ros_%s</name>\r\n", pkg->name);
+  fprintf(fp, "<package format=\"2\">\r\n");
+  fprintf(fp, "\t<name>%s</name>\r\n", pkg->name);
   fprintf(fp, "\t<version>1.0.0</version>\r\n");
   fprintf(fp, "\t<description>google buffer protocal to ros msg for %s</description>\r\n", pkg->name);
   fprintf(fp, "\t<maintainer email=\"logic_yan@hotmail.com\">devilogic</maintainer>\r\n");
@@ -77,6 +77,12 @@ int create_package_xml(char* xmlPath, struct package_t* pkg) {
   char depend_name[64];
   int index = 0;
 
+  fprintf(fp, "\t<build_depend>message_runtime</build_depend>\r\n");
+  fprintf(fp, "\t<exec_depend>message_runtime</exec_depend>\r\n");
+
+  fprintf(fp, "\t<build_depend>message_generation</build_depend>\r\n");
+  fprintf(fp, "\t<exec_depend>message_generation</exec_depend>\r\n");
+
   while (depend_pkg) {
     if (!strcmp(depend_pkg->name, pkg->name)) {
       depend_pkg = depend_pkg->next;
@@ -84,7 +90,7 @@ int create_package_xml(char* xmlPath, struct package_t* pkg) {
     }
 
     memset(depend_name, 0, 64);
-    sprintf(depend_name, "ros_%s", depend_pkg->name);
+    sprintf(depend_name, "%s", depend_pkg->name);
 
     if ((index = found_exist_package_name(depend_name)) != -1) {
       if (index == MAX_PACKAGE_SPACE) {
@@ -129,7 +135,7 @@ int add_depend_to_package_xml(char* xmlPath, struct package_t* pkg) {
     }
 
     memset(depend_name, 0, 64);
-    sprintf(depend_name, "ros_%s", depend_pkg->name);
+    sprintf(depend_name, "%s", depend_pkg->name);
 
     if ((index = found_exist_package_name(depend_name)) != -1) {
       if (index == MAX_PACKAGE_SPACE) {
@@ -163,13 +169,27 @@ int add_depend_to_package_xml(char* xmlPath, struct package_t* pkg) {
 }
 
 int make_package_xml(struct package_t* pkg) {
-  char package_xml_path[256] = {0};
+  char package_xml_path[MAX_BUFFER_SIZE] = {0};
   strcpy(package_xml_path, gconfig.output_msg_path);
   if (package_xml_path[strlen(package_xml_path)-1] != '/')
     strcat(package_xml_path, "/");
+
   for (int i = 0; i < pkg->header.package_name_count; i++) {
-    strcat(package_xml_path, pkg->header.package_name[i]);
-    strcat(package_xml_path, "/");
+    /*
+     * 这里组成msg输出的目录,apollo专属
+     */
+    if ((i == 0) && (strcmp(pkg->header.package_name[i], "apollo") == 0)) {
+      strcat(package_xml_path, pkg->header.package_name[i]);
+      strcat(package_xml_path, "/");
+    } else {
+      // 组成目录名
+      strcat(package_xml_path, pkg->header.package_name[i]);
+      if (i < pkg->header.package_name_count-1) {
+        strcat(package_xml_path, "_");
+      } else {
+        strcat(package_xml_path, "/");
+      }
+    }
   }
   strcat(package_xml_path, "package.xml");
 
@@ -187,11 +207,25 @@ int make_package_xml(struct package_t* pkg) {
 int make_CMakeLists(struct package_t* pkg) {
   assert(pkg);
 
-  char path[256] = {0};
+  char path[MAX_BUFFER_SIZE] = {0};
   strcpy(path, gconfig.output_msg_path);
+
   for (int i = 0; i < pkg->header.package_name_count; i++) {
-    strcat(path, pkg->header.package_name[i]);
-    strcat(path, "/");
+    /*
+     * 这里组成msg输出的目录,apollo专属
+     */
+    if ((i == 0) && (strcmp(pkg->header.package_name[i], "apollo") == 0)) {
+      strcat(path, pkg->header.package_name[i]);
+      strcat(path, "/");
+    } else {
+      // 组成目录名
+      strcat(path, pkg->header.package_name[i]);
+      if (i < pkg->header.package_name_count-1) {
+        strcat(path, "_");
+      } else {
+        strcat(path, "/");
+      }
+    }
   }
   strcat(path, "CMakeLists.txt");
 
@@ -202,8 +236,8 @@ int make_CMakeLists(struct package_t* pkg) {
   }
 
   fprintf(fp, "cmake_minimum_required(VERSION 2.8.3)\r\n");
-  fprintf(fp, "project(ros_%s)\r\n", pkg->name);
-  fprintf(fp, "find_package(catkin REQUIRED COMPONENTS message_generation\r\n");
+  fprintf(fp, "project(%s)\r\n", pkg->name);
+  fprintf(fp, "find_package(catkin REQUIRED COMPONENTS\r\n");
   //fprintf(fp, "find_package(catkin REQUIRED COMPONENTS message_generation stdex_msg\r\n");
   int i = 0;
   while (strlen(package_name_list[i])) {

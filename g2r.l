@@ -311,9 +311,16 @@ char *handle_xxx_dot_yyy(char* gt) {
 
   assert(i >= 2);
 
-  char* pkg_name = type_name[i-2];
+  char package_name[MAX_NAME_SIZE] = {0};
+  for (int j = 0; j < i-1; j++) {
+    strcat(package_name, type_name[j]);
+    if (i < j-2) {
+      strcat(package_name, "_");
+    }
+  }
+
   char* field_name = type_name[i-1];
-  sprintf(pkg_field_name, "%s/%s", pkg_name, field_name);
+  sprintf(pkg_field_name, "%s/%s", package_name, field_name);
 
   return pkg_field_name;
 }
@@ -407,8 +414,9 @@ int make_g2r_h_file(struct package_t* pkg, struct message_t* msg) {
   sprintf(protocal_include_path, "%s%s", protocal_include_path, only_name);
   fprintf(fp, "#include <%s>\r\n", protocal_include_path);
 
-  char* pkg_name = pkg->header.package_name[pkg->header.package_name_count-1];
-  fprintf(fp, "#include <ros_%s/%s.h>\r\n", pkg_name, msg->name);
+  //char* pkg_name = pkg->header.package_name[pkg->header.package_name_count-1];
+  char* pkg_name = pkg->name;
+  fprintf(fp, "#include <%s/%s.h>\r\n", pkg_name, msg->name);
 
   //
   // namespace
@@ -421,7 +429,7 @@ int make_g2r_h_file(struct package_t* pkg, struct message_t* msg) {
 
   char ros_namespace[MAX_NAME_SIZE] = {0};
   pkg_name = pkg->header.package_name[pkg->header.package_name_count-1];
-  sprintf(ros_namespace, "ros_%s::%s::", pkg_name, msg->name);
+  sprintf(ros_namespace, "%s::%s::", pkg_name, msg->name);
 
   fprintf(fp, "\r\n\r\n");
 
@@ -490,7 +498,7 @@ int make_g2r_cc_file(struct package_t* pkg, struct message_t* msg) {
 
   char* pkg_name = pkg->header.package_name[pkg->header.package_name_count-1];
   char ros_namespace[MAX_BUFFER_SIZE] = {0};
-  sprintf(ros_namespace, "ros_%s::%s::", pkg_name, msg->name);
+  sprintf(ros_namespace, "%s::%s::", pkg_name, msg->name);
 
   char gproto_varname[MAX_BUFFER_SIZE] = {0};
   char rosmsg_varname[MAX_BUFFER_SIZE] = {0};
@@ -609,8 +617,7 @@ int make_ros_message(char* cc_dir, char* msg_dir, struct package_t* pkg, struct 
     gerror("create \'%s\' failed\r\n", msg_path);
     return -1;
   }
-  fprintf(msg->fp, "DO NOT EDIT, GENERATE BY g2r\r\n");
-
+  fprintf(msg->fp, "# DO NOT EDIT, GENERATE BY g2r\r\n");
 
   if (msg->exp_count) {
     char ros_type[MAX_NAME_SIZE];
@@ -683,11 +690,28 @@ int make_ros_package(struct package_t* pkg) {
   strcpy(stdex_dir, gconfig.output_stdex_msg_path);
 
   for (int i = 0; i < pkg->header.package_name_count; i++) {
-    strcat(msg_dir, pkg->header.package_name[i]);
-    strcat(msg_dir, "/");
+    /*
+     * 这里组成msg输出的目录,apollo专属
+     */
+    if ((i == 0) && (strcmp(pkg->header.package_name[i], "apollo") == 0)) {
+      strcat(msg_dir, pkg->header.package_name[i]);
+      strcat(msg_dir, "/");
 
-    strcat(cc_path, pkg->header.package_name[i]);
-    strcat(cc_path, "/");
+      strcat(cc_path, pkg->header.package_name[i]);
+      strcat(cc_path, "/");
+    } else {
+      // 组成目录名
+      strcat(msg_dir, pkg->header.package_name[i]);
+      strcat(cc_path, pkg->header.package_name[i]);
+
+      if (i < pkg->header.package_name_count-1) {
+        strcat(msg_dir, "_");
+        strcat(cc_path, "_");
+      } else {
+        strcat(msg_dir, "/");
+        strcat(cc_path, "/");
+      }
+    }
   }
 
   strcat(msg_dir, "msg/");
