@@ -314,7 +314,7 @@ char *handle_xxx_dot_yyy(char* gt) {
   char package_name[MAX_NAME_SIZE] = {0};
   for (int j = 0; j < i-1; j++) {
     strcat(package_name, type_name[j]);
-    if (i < j-2) {
+    if (j < i-2) {
       strcat(package_name, "_");
     }
   }
