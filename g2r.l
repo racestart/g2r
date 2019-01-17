@@ -369,7 +369,7 @@ int make_g2r_h_file(struct package_t* pkg, struct message_t* msg) {
   FILE* fp = msg->h_fp;
   assert(fp);
 
-  fprintf(fp, "#ifdef G2R_%s_H\r\n", pkg->name);
+  fprintf(fp, "#ifndef G2R_%s_H\r\n", pkg->name);
   fprintf(fp, "#define G2R_%s_H\r\n", pkg->name);
 
   fprintf(fp, "\r\n");
