@@ -598,9 +598,6 @@ char *yytext;
 #include "g2r.tab.h"
 #include "makepkg.h"
 
-extern char message_files[MAX_MESSAGE_IN_PACKAGE][MAX_BUFFER_SIZE];
-extern int message_files_index;
-
 extern void reset_yyparse();
 extern void yyerror(char* s, ...);
 extern void gerror(char* s, ...);
@@ -630,8 +627,8 @@ int set_text(char* t) {
  */
 int prev_mode = 0;
 
-#line 634 "lex.yy.c"
-#line 635 "lex.yy.c"
+#line 631 "lex.yy.c"
+#line 632 "lex.yy.c"
 
 #define INITIAL 0
 #define COMMENT1 1
@@ -857,9 +854,9 @@ YY_DECL
 		}
 
 	{
-#line 70 "./g2r.l"
+#line 67 "./g2r.l"
 
-#line 863 "lex.yy.c"
+#line 860 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -928,77 +925,77 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 71 "./g2r.l"
+#line 68 "./g2r.l"
 { BEGIN COMMENT1; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 72 "./g2r.l"
+#line 69 "./g2r.l"
 { BEGIN prev_mode; }
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 73 "./g2r.l"
+#line 70 "./g2r.l"
 
 	YY_BREAK
 case YY_STATE_EOF(COMMENT1):
-#line 74 "./g2r.l"
+#line 71 "./g2r.l"
 { unterminated(); return EOL; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 76 "./g2r.l"
+#line 73 "./g2r.l"
 { BEGIN COMMENT2; }
 	YY_BREAK
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 77 "./g2r.l"
+#line 74 "./g2r.l"
 { BEGIN prev_mode; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 78 "./g2r.l"
+#line 75 "./g2r.l"
 
 	YY_BREAK
 case YY_STATE_EOF(COMMENT2):
-#line 79 "./g2r.l"
+#line 76 "./g2r.l"
 { return EOL; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 81 "./g2r.l"
+#line 78 "./g2r.l"
 { BEGIN EXOPT_MODE; }
 	YY_BREAK
 case 8:
 /* rule 8 can match eol */
 YY_RULE_SETUP
-#line 82 "./g2r.l"
+#line 79 "./g2r.l"
 
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 83 "./g2r.l"
+#line 80 "./g2r.l"
 { BEGIN prev_mode; }
 	YY_BREAK
 case YY_STATE_EOF(EXOPT_MODE):
-#line 84 "./g2r.l"
+#line 81 "./g2r.l"
 { unterminated(); return EOL; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 86 "./g2r.l"
+#line 83 "./g2r.l"
 { return QUOTATION; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 87 "./g2r.l"
+#line 84 "./g2r.l"
 { return ASSIGN; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 88 "./g2r.l"
+#line 85 "./g2r.l"
 {
   if (set_text("syntax") != 0) yyterminate();
   return PROTO;
@@ -1006,27 +1003,27 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 92 "./g2r.l"
+#line 89 "./g2r.l"
 { BEGIN INITIAL; /*return SEMICOLON;*/ }
 	YY_BREAK
 case 14:
 /* rule 14 can match eol */
 YY_RULE_SETUP
-#line 93 "./g2r.l"
+#line 90 "./g2r.l"
 
 	YY_BREAK
 case YY_STATE_EOF(SYNTAX_MODE):
-#line 94 "./g2r.l"
+#line 91 "./g2r.l"
 { unterminated(); return EOL; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 96 "./g2r.l"
+#line 93 "./g2r.l"
 { return QUOTATION; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 97 "./g2r.l"
+#line 94 "./g2r.l"
 {
   if (set_text("import") != 0) yyterminate();
   return PATH;
@@ -1034,32 +1031,32 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 101 "./g2r.l"
+#line 98 "./g2r.l"
 { BEGIN INITIAL; /*return SEMICOLON;*/ }
 	YY_BREAK
 case 18:
 /* rule 18 can match eol */
 YY_RULE_SETUP
-#line 102 "./g2r.l"
+#line 99 "./g2r.l"
 
 	YY_BREAK
 case YY_STATE_EOF(IMPORT_MODE):
-#line 103 "./g2r.l"
+#line 100 "./g2r.l"
 { unterminated(); return EOL; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 105 "./g2r.l"
+#line 102 "./g2r.l"
 { return QUOTATION; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 106 "./g2r.l"
+#line 103 "./g2r.l"
 { BEGIN INITIAL; /*return SEMICOLON;*/ }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 107 "./g2r.l"
+#line 104 "./g2r.l"
 {
   if (set_text("package") != 0) yyterminate();
   return PACKAGE_NAME;
@@ -1068,51 +1065,51 @@ YY_RULE_SETUP
 case 22:
 /* rule 22 can match eol */
 YY_RULE_SETUP
-#line 111 "./g2r.l"
+#line 108 "./g2r.l"
 
 	YY_BREAK
 case YY_STATE_EOF(PACKAGE_MODE):
-#line 112 "./g2r.l"
+#line 109 "./g2r.l"
 { unterminated(); return EOL; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 114 "./g2r.l"
+#line 111 "./g2r.l"
 { BEGIN COMMENT1; prev_mode = ENUM_MODE; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 115 "./g2r.l"
+#line 112 "./g2r.l"
 { BEGIN COMMENT2; prev_mode = ENUM_MODE; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 116 "./g2r.l"
+#line 113 "./g2r.l"
 { BEGIN EXOPT_MODE; prev_mode = ENUM_MODE; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 117 "./g2r.l"
+#line 114 "./g2r.l"
 { return LBRACE; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 118 "./g2r.l"
+#line 115 "./g2r.l"
 { BEGIN INITIAL; prev_mode = INITIAL; return RBRACE; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 119 "./g2r.l"
+#line 116 "./g2r.l"
 { return ASSIGN; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 120 "./g2r.l"
+#line 117 "./g2r.l"
 { /*return SEMICOLON;*/ }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 121 "./g2r.l"
+#line 118 "./g2r.l"
 {
   if (set_text("enum") != 0) yyterminate();
   return SYMBOL;
@@ -1120,7 +1117,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 125 "./g2r.l"
+#line 122 "./g2r.l"
 {
   if (set_text("enum value") != 0) yyterminate();
   return NUMBER;
@@ -1129,51 +1126,51 @@ YY_RULE_SETUP
 case 32:
 /* rule 32 can match eol */
 YY_RULE_SETUP
-#line 129 "./g2r.l"
+#line 126 "./g2r.l"
 
 	YY_BREAK
 case YY_STATE_EOF(ENUM_MODE):
-#line 130 "./g2r.l"
+#line 127 "./g2r.l"
 { unterminated(); return EOL; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 132 "./g2r.l"
+#line 129 "./g2r.l"
 { BEGIN COMMENT1; prev_mode = ONEOF_MODE; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 133 "./g2r.l"
+#line 130 "./g2r.l"
 { BEGIN COMMENT2; prev_mode = ONEOF_MODE; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 134 "./g2r.l"
+#line 131 "./g2r.l"
 { BEGIN EXOPT_MODE; prev_mode = ONEOF_MODE; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 135 "./g2r.l"
+#line 132 "./g2r.l"
 { return LBRACE; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 136 "./g2r.l"
+#line 133 "./g2r.l"
 { BEGIN INITIAL; prev_mode = INITIAL; return RBRACE; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 137 "./g2r.l"
+#line 134 "./g2r.l"
 { return ASSIGN; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 138 "./g2r.l"
+#line 135 "./g2r.l"
 { /*return SEMICOLON;*/ }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 139 "./g2r.l"
+#line 136 "./g2r.l"
 {
   if (set_text("oneof") != 0) yyterminate();
   return SYMBOL;
@@ -1181,7 +1178,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 143 "./g2r.l"
+#line 140 "./g2r.l"
 {
   if (set_text("oneof value") != 0) yyterminate();
   return INTEGER;
@@ -1190,56 +1187,56 @@ YY_RULE_SETUP
 case 42:
 /* rule 42 can match eol */
 YY_RULE_SETUP
-#line 147 "./g2r.l"
+#line 144 "./g2r.l"
 
 	YY_BREAK
 case YY_STATE_EOF(ONEOF_MODE):
-#line 148 "./g2r.l"
+#line 145 "./g2r.l"
 { unterminated(); return EOL; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 150 "./g2r.l"
+#line 147 "./g2r.l"
 { BEGIN COMMENT1; prev_mode = MAP_MODE; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 151 "./g2r.l"
+#line 148 "./g2r.l"
 { BEGIN COMMENT2; prev_mode = MAP_MODE; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 152 "./g2r.l"
+#line 149 "./g2r.l"
 { BEGIN EXOPT_MODE; prev_mode = MAP_MODE; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 153 "./g2r.l"
+#line 150 "./g2r.l"
 { return ASSIGN; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 154 "./g2r.l"
+#line 151 "./g2r.l"
 { BEGIN INITIAL; prev_mode = INITIAL; /*return SEMICOLON;*/ }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 155 "./g2r.l"
+#line 152 "./g2r.l"
 { return LDASH; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 156 "./g2r.l"
+#line 153 "./g2r.l"
 { return RDASH; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 157 "./g2r.l"
+#line 154 "./g2r.l"
 { return COMMA; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 158 "./g2r.l"
+#line 155 "./g2r.l"
 {
   if (set_text("map") != 0) yyterminate();
   return SYMBOL;
@@ -1247,7 +1244,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 162 "./g2r.l"
+#line 159 "./g2r.l"
 {
   if (set_text("map value") != 0) yyterminate();
   return INTEGER;
@@ -1256,41 +1253,41 @@ YY_RULE_SETUP
 case 53:
 /* rule 53 can match eol */
 YY_RULE_SETUP
-#line 166 "./g2r.l"
+#line 163 "./g2r.l"
 
 	YY_BREAK
 case YY_STATE_EOF(MAP_MODE):
-#line 167 "./g2r.l"
+#line 164 "./g2r.l"
 { unterminated(); return EOL; }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 170 "./g2r.l"
+#line 167 "./g2r.l"
 { return ASSIGN; }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 171 "./g2r.l"
+#line 168 "./g2r.l"
 { /*return SEMICOLON;*/ }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 172 "./g2r.l"
+#line 169 "./g2r.l"
 { return QUOTATION; }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 173 "./g2r.l"
+#line 170 "./g2r.l"
 { return LBRACE; }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 174 "./g2r.l"
+#line 171 "./g2r.l"
 { return RBRACE; }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 175 "./g2r.l"
+#line 172 "./g2r.l"
 {
   if (set_text("message") != 0) yyterminate();
   return INTEGER;
@@ -1298,7 +1295,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 179 "./g2r.l"
+#line 176 "./g2r.l"
 {
   if (set_text("message") != 0) yyterminate();
   if (strcmp(yytext, "message") == 0)
@@ -1331,7 +1328,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 208 "./g2r.l"
+#line 205 "./g2r.l"
 {
   if (set_text("message") != 0) yyterminate();
   return PACKAGE_TYPE;
@@ -1340,19 +1337,19 @@ YY_RULE_SETUP
 case 62:
 /* rule 62 can match eol */
 YY_RULE_SETUP
-#line 212 "./g2r.l"
+#line 209 "./g2r.l"
 
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
-#line 213 "./g2r.l"
+#line 210 "./g2r.l"
 { return EOL; }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 215 "./g2r.l"
+#line 212 "./g2r.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 1356 "lex.yy.c"
+#line 1353 "lex.yy.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2367,7 +2364,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 215 "./g2r.l"
+#line 212 "./g2r.l"
 
 struct g2r_config gconfig = {0};
 
@@ -2470,7 +2467,7 @@ char *handle_xxx_dot_yyy(char* gt) {
   char package_name[MAX_NAME_SIZE] = {0};
   for (int j = 0; j < i-1; j++) {
     strcat(package_name, type_name[j]);
-    if (i < j-2) {
+    if (j < i-2) {
       strcat(package_name, "_");
     }
   }
@@ -2525,7 +2522,7 @@ int make_g2r_h_file(struct package_t* pkg, struct message_t* msg) {
   FILE* fp = msg->h_fp;
   assert(fp);
 
-  fprintf(fp, "#ifdef G2R_%s_H\r\n", pkg->name);
+  fprintf(fp, "#ifndef G2R_%s_H\r\n", pkg->name);
   fprintf(fp, "#define G2R_%s_H\r\n", pkg->name);
 
   fprintf(fp, "\r\n");
@@ -2766,8 +2763,6 @@ int make_ros_message(char* cc_dir, char* msg_dir, struct package_t* pkg, struct 
   strcpy(msg_path, msg_dir);
   sprintf(msg_path, "%s%s.msg", msg_path, msg->name);
 
-  // 这里不用判断message_files_index,在yyparse中已经判断了计数
-  strcpy(message_files[message_files_index++], msg->name);
   msg->fp = fopen(msg_path, "w");
   if (msg->fp == NULL) {
     gerror("create \'%s\' failed\r\n", msg_path);

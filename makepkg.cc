@@ -9,14 +9,12 @@
 #include <stdarg.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 #include <tinyxml2/tinyxml2.h>
 
 extern void gerror(char* s, ...);
 extern struct g2r_config gconfig;
-
-char message_files[MAX_MESSAGE_IN_PACKAGE][MAX_BUFFER_SIZE] = {0};
-int message_files_index = 0;
 
 static char package_name_list[MAX_PACKAGE_SPACE][MAX_NAME_SIZE] = {0};
 
@@ -229,6 +227,13 @@ int make_CMakeLists(struct package_t* pkg) {
   }
   strcat(path, "CMakeLists.txt");
 
+  // 首先确定文件是否存在
+  if (access(path, 0) == 0) {
+    struct cmakelists_t* cmk = read_CMakeLists(path);
+    if (!cmk) return -1;
+    return write_CMakeLists(path, cmk, pkg);
+  }
+
   FILE* fp = fopen(path, "w");
   if (fp == NULL) {
     gerror("create \'%s\' failed\r\n", path);
@@ -237,8 +242,7 @@ int make_CMakeLists(struct package_t* pkg) {
 
   fprintf(fp, "cmake_minimum_required(VERSION 2.8.3)\r\n");
   fprintf(fp, "project(%s)\r\n", pkg->name);
-  fprintf(fp, "find_package(catkin REQUIRED COMPONENTS\r\n");
-  //fprintf(fp, "find_package(catkin REQUIRED COMPONENTS message_generation stdex_msg\r\n");
+  fprintf(fp, "find_package(catkin REQUIRED COMPONENTS message_generation\r\n");
   int i = 0;
   while (strlen(package_name_list[i])) {
     fprintf(fp, "\t%s\r\n", package_name_list[i]);
@@ -246,17 +250,161 @@ int make_CMakeLists(struct package_t* pkg) {
   }
   fprintf(fp, ")\r\n");
 
+  fprintf(fp, "generate_messages(DEPENDENCIES)\r\n");
+  fprintf(fp, "catkin_package(CATKIN_DEPENDS message_runtime)\r\n");
+
   fprintf(fp, "add_message_files(\r\n");
   fprintf(fp, "\tDIRECTORY msg\r\n");
   fprintf(fp, "\tFILES\r\n");
-  for (int i = 0; i < message_files_index; i++) {
-    fprintf(fp, "\t%s.msg\r\n", message_files[i]);
+  for (int i = 0; i < pkg->message_count; i++) {
+    fprintf(fp, "\t%s.msg\r\n", pkg->messages[i]->name);
+  }
+  fprintf(fp, ")\r\n");
+
+  fflush(fp);
+  fclose(fp);
+
+  return 0;
+}
+
+int read_line(FILE* fp, char* buffer, int buffer_size) {
+  assert(fp && buffer);
+  assert(buffer_size > 0);
+
+  memset(buffer, 0, buffer_size);
+
+  char ch = 0;
+  int count = 0;
+  while(!feof(fp)) {
+    if (count >= buffer_size) {
+      gerror("line size is longer then buffer size\r\n");
+      return -1;
+    }
+
+    ch = fgetc(fp);
+    if (ch == '\r') continue;
+    if (ch == '\n') return count;
+    
+    *(buffer + count) = ch;
+    count++;
+  }
+
+  return count;
+}
+
+int parse_add_message_files(struct cmakelists_t* cmk, char* line) {
+  char* token = strtok(line, "\t\r\n ");
+  while (token) {
+    //printf("parse token = %s\r\n", token);
+    if (!strcmp(token, "(")) {
+      token = strtok(NULL, "\t\r\n ");
+      continue;
+    }
+    if (!strcmp(token, ")")) return 1;
+    if (append_msgfile(cmk, token) == -1) return -1;
+    token = strtok(NULL, "\t\r\n ");
+  }
+  return 0;
+}
+
+struct cmakelists_t* read_CMakeLists(char* path) {
+  FILE* fp = fopen(path, "r");
+  if (fp == NULL) {
+    gerror("open \'%s\' failed\r\n", path);
+    return NULL;
+  }
+
+  struct cmakelists_t* cmk = (struct cmakelists_t*)malloc(sizeof(struct cmakelists_t));
+  if (!cmk) {
+    gerror("malloc cmakelists_t memory failed\r\n");
+    return NULL;
+  }
+  memset(cmk, 0, sizeof(struct cmakelists_t));
+
+  int in_add_message_files = 0;
+  int line_count = 0;
+  char line[MAX_LINE_SIZE] = {0};
+  char ch = 0;
+  while(!feof(fp)) {
+    if (read_line(fp, line, MAX_LINE_SIZE) == -1) {
+      fclose(fp);
+      free(cmk);
+      return NULL;
+    }
+
+    if (!in_add_message_files) {
+      if (!strncmp(line, "add_message_files", strlen("add_message_files"))) {
+        if (!parse_add_message_files(cmk, &line[0]+strlen("add_message_files"))) {
+          in_add_message_files = 1;
+        }
+      }
+    } else {
+      //
+      // 在 add_message_files模式下，分析每行的内容直到遇到)号
+      //
+      //printf("in add_message_files\r\n");
+      if (parse_add_message_files(cmk, line)) {
+        in_add_message_files = 0; // 退出add_message_files模式
+      }
+    }
+    line_count++;
+  }
+  fclose(fp);
+  return cmk;
+}
+
+int append_msgfile(struct cmakelists_t* cmk, char* msgfile) {
+  assert(cmk && msgfile);
+
+  if (cmk->msg_files_count == MAX_ROSMSG_FILES) {
+    gerror("ros msg files is over limit\r\n");
+    return -1;
+  }
+  strcpy(cmk->msg_files[cmk->msg_files_count++], msgfile);
+  return 0;
+}
+
+int write_CMakeLists(char* path, struct cmakelists_t* cmk, struct package_t* pkg) {
+  assert(cmk && path && pkg);
+
+  FILE* fp = fopen(path, "w");
+  if (fp == NULL) {
+    gerror("create \'%s\' failed\r\n", path);
+    return -1;
+  }
+
+  fprintf(fp, "# DO NOT EDIT, GENERATE BY g2r\r\n");
+  fprintf(fp, "cmake_minimum_required(VERSION 2.8.3)\r\n");
+  fprintf(fp, "project(%s)\r\n", pkg->name);
+  fprintf(fp, "find_package(catkin REQUIRED COMPONENTS\r\n");
+  int i = 0;
+  while (strlen(package_name_list[i])) {
+    fprintf(fp, "\t%s\r\n", package_name_list[i]);
+    i++;
   }
   fprintf(fp, ")\r\n");
 
   fprintf(fp, "generate_messages(DEPENDENCIES)\r\n");
   fprintf(fp, "catkin_package(CATKIN_DEPENDS message_runtime)\r\n");
 
+  char msgfile[MAX_NAME_SIZE] = {0};
+  for (int i = 0; i < pkg->message_count; i++) {
+    //memset(msgfile, 0, MAX_NAME_SIZE);
+    sprintf(msgfile, "%s.msg", pkg->messages[i]->name);
+    if (append_msgfile(cmk, msgfile) == -1) {
+      free(cmk);
+      fclose(fp);
+      return -1;
+    }
+  }
+
+  fprintf(fp, "add_message_files(\r\n");
+  for (int i = 0; i < cmk->msg_files_count; i++) {
+    fprintf(fp, "\t%s\r\n", cmk->msg_files[i]);
+  }
+  fprintf(fp, ")\r\n");
+
+  free(cmk);
   fflush(fp);
   fclose(fp);
 

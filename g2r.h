@@ -100,4 +100,11 @@ struct package_t {
 struct package_t* global_package();
 void free_packages();
 
+#define MAX_LINE_SIZE           512
+#define MAX_ROSMSG_FILES        256
+struct cmakelists_t {
+  char msg_files[MAX_ROSMSG_FILES][MAX_NAME_SIZE];
+  int msg_files_count;
+};
+
 #endif

@@ -33,9 +33,6 @@ RE_PT       ([a-zA-Z_][a-zA-Z0-9_.]*)
 #include "g2r.tab.h"
 #include "makepkg.h"
 
-extern char message_files[MAX_MESSAGE_IN_PACKAGE][MAX_BUFFER_SIZE];
-extern int message_files_index;
-
 extern void reset_yyparse();
 extern void yyerror(char* s, ...);
 extern void gerror(char* s, ...);
@@ -610,8 +607,6 @@ int make_ros_message(char* cc_dir, char* msg_dir, struct package_t* pkg, struct 
   strcpy(msg_path, msg_dir);
   sprintf(msg_path, "%s%s.msg", msg_path, msg->name);
 
-  // 这里不用判断message_files_index,在yyparse中已经判断了计数
-  strcpy(message_files[message_files_index++], msg->name);
   msg->fp = fopen(msg_path, "w");
   if (msg->fp == NULL) {
     gerror("create \'%s\' failed\r\n", msg_path);
